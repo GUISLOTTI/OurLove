@@ -718,6 +718,8 @@
                 mainContent.classList.add('active');
                 document.body.style.overflow = 'auto';
                 initializeMainContent();
+                const audio = document.getElementById('audio-player');
+                audio.play().catch(e => console.log('Erro ao reproduzir áudio:', e)); // Inicia o áudio
             }, 1000);
         });
 

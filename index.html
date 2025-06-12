@@ -1,0 +1,766 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Dia dos Namorados!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe6f0 0%, #fff0f5 100%);
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        /* === CARTA INICIAL === */
+        .carta-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffe6f0 0%, #fff0f5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .carta-container {
+            width: 420px;
+            height: 300px;
+            perspective: 1500px;
+            position: relative;
+            filter: drop-shadow(0 15px 35px rgba(215,38,96,0.15));
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        .carta-overlay.opened .envelope-flap {
+            transform: rotateX(-140deg);
+            pointer-events: none;
+        }
+
+        .carta-overlay.opened .letter-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .carta-overlay.opened .open-btn {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(10px);
+        }
+
+        .carta-overlay.opened .enter-btn {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 12px;
+            border: 2px solid #f0f0f0;
+            box-shadow: 0 10px 30px rgba(215,38,96,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65%;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 100%);
+            border-radius: 12px 12px 0 0;
+            border: 2px solid #f0f0f0;
+            border-bottom: none;
+            transform-origin: bottom center;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 3;
+            box-shadow: 0 5px 20px rgba(215,38,96,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+            .envelope-flap .envelope-icon {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(45deg, #d72660, #ff6b9d);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 15px rgba(215,38,96,0.3);
+                font-size: 2.2em;
+                margin-bottom: 15px;
+            }
+
+        .envelope-text {
+            color: #d72660;
+            font-size: 0.9em;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+            .envelope-text .para {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .envelope-text .de {
+                font-style: italic;
+                color: #b8004c;
+            }
+
+        .letter-content {
+            position: absolute;
+            top: 12%;
+            left: 6%;
+            width: 88%;
+            height: 55%;
+            background: linear-gradient(145deg, #fff0f5 0%, #ffe6f0 100%);
+            border-radius: 8px;
+            padding: 30px 25px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease 0.3s;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(215,38,96,0.1);
+        }
+
+            .letter-content h2 {
+                color: #d72660;
+                font-size: 1.3em;
+                margin-bottom: 12px;
+                font-weight: 600;
+            }
+
+            .letter-content p {
+                color: #b8004c;
+                font-size: 0.95em;
+                line-height: 1.5;
+                margin-bottom: 18px;
+            }
+
+        .open-btn {
+            background: linear-gradient(45deg, #d72660, #ff6b9d);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 28px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(215,38,96,0.3);
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            overflow: hidden;
+        }
+
+            .open-btn:hover {
+                transform: translateX(-50%) translateY(-2px);
+                box-shadow: 0 6px 20px rgba(215,38,96,0.4);
+            }
+
+        .enter-btn {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            padding: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s ease 0.5s;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #d72660;
+            text-shadow: 0 4px 15px rgba(215,38,96,0.3);
+        }
+
+            .enter-btn:hover {
+                transform: translateX(-50%) scale(1.1);
+                text-shadow: 0 6px 20px rgba(215,38,96,0.5);
+            }
+
+        /* === CONTEÚDO PRINCIPAL === */
+        .main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in-out;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+            .main-content.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+        .hearts-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #d72660;
+            margin: 30px 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 8px rgba(255,255,255,0.8);
+            z-index: 2;
+            position: relative;
+        }
+
+        .message {
+            font-size: 1.5em;
+            color: #d72660;
+            margin: 20px 0;
+            font-weight: 600;
+            z-index: 2;
+            position: relative;
+            text-shadow: 1px 1px 4px rgba(255,255,255,0.8);
+        }
+
+        #timer {
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: #d72660;
+            font-weight: bold;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* Container modificado para posicionar letras e carrossel lado a lado */
+        .carousel-container {
+            display: flex;
+            flex-direction: row; /* Itens em linha */
+            align-items: center; /* Alinha verticalmente */
+            justify-content: center; /* Centraliza o conjunto */
+            gap: 30px; /* Espaço entre os itens */
+            margin: 40px auto;
+            padding: 0 20px; /* Espaçamento lateral */
+            z-index: 2;
+            position: relative;
+        }
+
+        .carousel {
+            width: 90vw;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(215,38,96,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .carousel img {
+                width: 100%;
+                height: auto;
+                max-height: 60vh;
+                border-radius: 20px;
+                transition: opacity 0.6s ease;
+                display: block;
+            }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(215,38,96,0.8);
+            border: none;
+            color: white;
+            font-size: 1.8em;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            z-index: 3;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+            .carousel-btn:hover {
+                background: #d72660;
+                opacity: 1;
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            .carousel-btn.left {
+                left: 15px;
+            }
+
+            .carousel-btn.right {
+                right: 15px;
+            }
+
+        /* Colunas das letras */
+        .lyrics-col {
+            max-width: 400px;
+            font-size: 1.1em;
+            color: #d72660;
+            background: rgba(255,255,255,0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(215,38,96,0.1);
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.8;
+            min-height: 320px;
+            display: flex; /* Adicionado para centralizar conteúdo */
+            flex-direction: column; /* Adicionado para centralizar conteúdo */
+            justify-content: center; /* Adicionado para centralizar conteúdo */
+        }
+
+            .lyrics-col .active {
+                background: linear-gradient(45deg, #ffe6f0, #fff0f5);
+                border-radius: 8px;
+                padding: 4px 8px;
+                font-weight: bold;
+                color: #b8004c;
+                transition: all 0.3s ease;
+                transform: translateX(5px);
+            }
+
+        #audio-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            opacity: 0.6;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+            border-radius: 10px;
+        }
+
+            #audio-player:hover {
+                opacity: 1;
+            }
+
+        /* Responsivo */
+        @media (max-width: 992px) { /* Breakpoint ajustado para melhor responsividade do layout */
+            .carousel-container {
+                flex-direction: column; /* Volta para layout em coluna */
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carta-container {
+                width: 90vw;
+                max-width: 380px;
+                height: 280px;
+            }
+
+            .letter-content {
+                padding: 25px 20px;
+            }
+
+                .letter-content h2 {
+                    font-size: 1.1em;
+                    margin-bottom: 10px;
+                }
+
+                .letter-content p {
+                    font-size: 0.85em;
+                    margin-bottom: 15px;
+                }
+
+            .open-btn {
+                padding: 10px 24px;
+                font-size: 0.9em;
+            }
+
+            .enter-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2.5em;
+                bottom: -90px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .lyrics-col {
+                max-width: 90vw; /* Ajusta a largura das letras no modo coluna */
+            }
+
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5em;
+            }
+
+            #audio-player {
+                width: 120px;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .envelope-text {
+                font-size: 0.8em;
+            }
+
+            .envelope-flap .envelope-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carta-overlay" id="cartaOverlay">
+        <div class="carta-container">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-flap" id="envelopeFlap">
+                    <div class="envelope-icon">💌</div>
+                    <div class="envelope-text">
+                        <div class="para">Para: Luiza Emmerich Cortê</div>
+                        <div class="de">Com carinho, Gabriel Guislotti ♥</div>
+                    </div>
+                </div>
+                <div class="letter-content" id="letterContent">
+                    <h2>Para o amor da minha vida 💕</h2>
+                    <p>
+                        Hoje é um dia especial, mas você faz todos os meus dias serem especiais.<br><br>
+                        Obrigado por ser quem você é.<br>
+                        <strong>Te amo muito!</strong>
+                    </p>
+                </div>
+            </div>
+            <button class="open-btn" id="openBtn">Abrir a carta 💌</button>
+            <button class="enter-btn" id="enterBtn">💖</button>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <canvas class="hearts-canvas" id="heartsCanvas"></canvas>
+
+        <h1>Feliz Dia dos Namorados! 💖</h1>
+
+        <div class="message">
+            <span>Você é o melhor presente que a vida me deu.<br>Te amo para sempre!</span>
+        </div>
+
+        <div id="timer"></div>
+
+        <div class="carousel-container">
+            <div class="lyrics-col" id="lyrics-original"></div>
+
+            <div class="carousel" id="carousel">
+                <button class="carousel-btn left" onclick="prevPhoto()">&#10094;</button>
+                <img id="carousel-img" src="imagens/1.jpeg" alt="Foto do casal">
+                <button class="carousel-btn right" onclick="nextPhoto()">&#10095;</button>
+            </div>
+
+            <div class="lyrics-col" id="lyrics-translation"></div>
+        </div>
+
+        <audio id="audio-player" controls loop>
+            <source src="musica.mp3" type="audio/mpeg">
+            Seu navegador não suporta áudio.
+        </audio>
+    </div>
+
+    <script>
+        // === ANIMAÇÃO DA CARTA ===
+        const cartaOverlay = document.getElementById('cartaOverlay');
+        const openBtn = document.getElementById('openBtn');
+        const enterBtn = document.getElementById('enterBtn');
+        const mainContent = document.getElementById('mainContent');
+
+        openBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            cartaOverlay.classList.add('opened');
+            console.log('Carta aberta!');
+        });
+
+        enterBtn.addEventListener('click', function () {
+            cartaOverlay.style.opacity = '0';
+
+            setTimeout(() => {
+                cartaOverlay.style.display = 'none';
+                mainContent.classList.add('active');
+                document.body.style.overflow = 'auto';
+
+                const audio = document.getElementById('audio-player');
+                if (audio) {
+                    audio.volume = 0.7;
+                    audio.play().catch(e => console.log('Autoplay do áudio foi impedido pelo navegador.'));
+                }
+
+                initializeMainContent();
+            }, 1000);
+        });
+
+        // === CONTEÚDO PRINCIPAL ===
+        function initializeMainContent() {
+            showPhoto(current);
+            resetCarouselTimeout();
+            updateTimer();
+            setInterval(updateTimer, 1000);
+            resizeCanvas();
+            animateHearts();
+            initializeLyrics();
+        }
+
+        // === CARROSSEL DE FOTOS ===
+        const photos = [
+            "imagens/1.jpeg", "imagens/2.jpeg", "imagens/3.jpeg", "imagens/5.jpeg",
+            "imagens/6.jpeg", "imagens/8.jpeg", "imagens/9.jpeg", "imagens/10.jpeg",
+            "imagens/11.jpeg", "imagens/12.jpeg", "imagens/13.jpeg", "imagens/14.jpeg",
+            "imagens/15.jpeg", "imagens/16.jpeg", "imagens/17.jpeg", "imagens/18.jpeg",
+            "imagens/19.jpeg", "imagens/20.jpeg", "imagens/22.jpeg", "imagens/25.jpeg",
+            "imagens/26.jpeg", "imagens/27.png", "imagens/28.png", "imagens/29.png", "imagens/30.jpeg"
+        ];
+
+        let current = 0;
+        let carouselTimeout = null;
+        const img = document.getElementById('carousel-img');
+
+        function preloadImages(images) {
+            images.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+        preloadImages(photos);
+
+        function showPhoto(idx) {
+            img.style.transition = 'opacity 0.6s ease';
+            img.style.opacity = '0';
+
+            setTimeout(() => {
+                img.src = photos[idx];
+                img.onload = () => {
+                    img.style.opacity = '1';
+                };
+            }, 300);
+        }
+
+        function nextPhoto() {
+            current = (current + 1) % photos.length;
+            showPhoto(current);
+            resetCarouselTimeout();
+        }
+
+        function prevPhoto() {
+            current = (current - 1 + photos.length) % photos.length;
+            showPhoto(current);
+            resetCarouselTimeout();
+        }
+
+        function resetCarouselTimeout() {
+            if (carouselTimeout) clearTimeout(carouselTimeout);
+            carouselTimeout = setTimeout(nextPhoto, 4000);
+        }
+
+        // === CRONÔMETRO ===
+        const startDate = new Date(2022, 9, 5, 0, 0, 0);
+
+        function updateTimer() {
+            const now = new Date();
+            let diff = now - startDate;
+
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            diff -= years * (1000 * 60 * 60 * 24 * 365.25);
+
+            const months = Math.floor(diff / (1000 * 60 * 60 * 24 * (365.25 / 12)));
+            diff -= months * (1000 * 60 * 60 * 24 * (365.25 / 12));
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff -= days * (1000 * 60 * 60 * 24);
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            diff -= hours * (1000 * 60 * 60);
+
+            const minutes = Math.floor(diff / (1000 * 60));
+            diff -= minutes * (1000 * 60);
+
+            const seconds = Math.floor(diff / 1000);
+
+            document.getElementById('timer').innerText =
+                `Estamos juntos há: ${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos!`;
+        }
+
+        // === CORAÇÕES ANIMADOS ===
+        const canvas = document.getElementById('heartsCanvas');
+        const ctx = canvas.getContext('2d');
+        let hearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawHeart(x, y, size, color, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x, y + size / 4);
+            ctx.quadraticCurveTo(x, y, x + size / 4, y);
+            ctx.quadraticCurveTo(x + size / 2, y, x + size / 2, y + size / 4);
+            ctx.quadraticCurveTo(x + size / 2, y, x + (3 * size) / 4, y);
+            ctx.quadraticCurveTo(x + size, y, x + size, y + size / 4);
+            ctx.quadraticCurveTo(x + size, y + size / 2, x + (3 * size) / 4, y + (3 * size) / 4);
+            ctx.lineTo(x + size / 2, y + size);
+            ctx.lineTo(x + size / 4, y + (3 * size) / 4);
+            ctx.quadraticCurveTo(x, y + size / 2, x, y + size / 4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function randomColor() {
+            const colors = ['#d72660', '#ffb6b9', '#ff6f91', '#f67280', '#c06c84'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function createHeart() {
+            const size = Math.random() * 25 + 15;
+            hearts.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height + size,
+                size: size,
+                speed: Math.random() * 1.5 + 0.5,
+                color: randomColor(),
+                alpha: Math.random() * 0.4 + 0.3,
+                sway: Math.random() * 2 + 1
+            });
+        }
+
+        function animateHearts() {
+            if (!mainContent.classList.contains('active')) {
+                requestAnimationFrame(animateHearts);
+                return;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = hearts.length - 1; i >= 0; i--) {
+                const h = hearts[i];
+                drawHeart(h.x, h.y, h.size, h.color, h.alpha);
+
+                h.y -= h.speed;
+                h.x += Math.sin(h.y / 50) * h.sway;
+
+                if (h.y + h.size < 0) {
+                    hearts.splice(i, 1);
+                }
+            }
+
+            if (Math.random() < 0.05) createHeart();
+            requestAnimationFrame(animateHearts);
+        }
+
+        // === LETRAS DA MÚSICA ===
+        const lyrics = [
+            { fr: "Je te laisserai des mots", pt: "Vou deixar bilhetes para você", time: 3 },
+            { fr: "En-dessous de ta porte", pt: "Por baixo da sua porta", time: 8 },
+            { fr: "En-dessous de les murs qui chantent", pt: "Por baixo das paredes que cantam", time: 13 },
+            { fr: "Tout près de la place où tes pieds passent", pt: "Bem perto do lugar onde seus pés passam", time: 18 },
+            { fr: "Cachés dans les trous de ton divan", pt: "Escondido nos buracos do seu sofá", time: 23 },
+            { fr: "Et quand tu es seule pendant un instant", pt: "E quando você estiver sozinha por um instante", time: 28 },
+            { fr: "Ramasse-moi", pt: "Me segure", time: 32 },
+            { fr: "Quand tu voudras", pt: "Sempre que você quiser", time: 36 },
+            { fr: "Ramasse-moi", pt: "Me segure", time: 40 },
+            { fr: "Quand tu voudras", pt: "Sempre que você quiser", time: 43 },
+            { fr: "Embrasse-moi", pt: "Me beije", time: 45 },
+            { fr: "Quand tu voudras", pt: "Sempre que você quiser", time: 48 }
+        ];
+
+        let currentLine = -1;
+
+        function initializeLyrics() {
+            const originalDiv = document.getElementById('lyrics-original');
+            const translationDiv = document.getElementById('lyrics-translation');
+
+            originalDiv.innerHTML = lyrics.map((l, i) => `<div id="fr${i}">${l.fr}</div>`).join('');
+            translationDiv.innerHTML = lyrics.map((l, i) => `<div id="pt${i}">${l.pt}</div>`).join('');
+
+            const audio = document.getElementById('audio-player');
+
+            function highlightLyrics() {
+                const currentTime = audio.currentTime;
+                let newLine = -1;
+
+                for (let i = 0; i < lyrics.length; i++) {
+                    if (currentTime >= lyrics[i].time) {
+                        newLine = i;
+                    }
+                }
+
+                if (newLine !== currentLine) {
+                    if (currentLine >= 0) {
+                        document.getElementById('fr' + currentLine)?.classList.remove('active');
+                        document.getElementById('pt' + currentLine)?.classList.remove('active');
+                    }
+                    if (newLine >= 0) {
+                        document.getElementById('fr' + newLine)?.classList.add('active');
+                        document.getElementById('pt' + newLine)?.classList.add('active');
+                    }
+                    currentLine = newLine;
+                }
+            }
+
+            audio.addEventListener('timeupdate', highlightLyrics);
+            audio.addEventListener('seeked', highlightLyrics);
+            audio.addEventListener('play', highlightLyrics);
+        }
+    </script>
+</body>
+</html>

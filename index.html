@@ -276,15 +276,15 @@
             position: relative;
         }
 
-        /* Container modificado para posicionar letras e carrossel lado a lado */
+        /* Container modificado para posicionar itens */
         .carousel-container {
             display: flex;
-            flex-direction: row; /* Itens em linha */
-            align-items: center; /* Alinha verticalmente */
-            justify-content: center; /* Centraliza o conjunto */
-            gap: 30px; /* Espaço entre os itens */
+            flex-direction: row; /* Desktop: Carousel e letras lado a lado */
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
             margin: 40px auto;
-            padding: 0 20px; /* Espaçamento lateral */
+            padding: 0 20px;
             z-index: 2;
             position: relative;
         }
@@ -325,7 +325,7 @@
             cursor: pointer;
             z-index: 3;
             transition: all 0.3s ease;
-            opacity: 0.7;
+            opacity: 0.3;
         }
 
             .carousel-btn:hover {
@@ -342,6 +342,15 @@
                 right: 15px;
             }
 
+        /* Novo container para as colunas de letras */
+        .lyrics-wrapper {
+            display: flex;
+            flex-direction: column; /* Padrão: colunas de letras empilhadas no desktop (ou se sobrar espaço) */
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
         /* Colunas das letras */
         .lyrics-col {
             max-width: 400px;
@@ -355,9 +364,9 @@
             text-align: left;
             line-height: 1.8;
             min-height: 320px;
-            display: flex; /* Adicionado para centralizar conteúdo */
-            flex-direction: column; /* Adicionado para centralizar conteúdo */
-            justify-content: center; /* Adicionado para centralizar conteúdo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
             .lyrics-col .active {
@@ -388,8 +397,22 @@
         /* Responsivo */
         @media (max-width: 992px) { /* Breakpoint ajustado para melhor responsividade do layout */
             .carousel-container {
-                flex-direction: column; /* Volta para layout em coluna */
+                flex-direction: column; /* Carrossel e lyrics-wrapper empilhados no mobile */
                 gap: 20px;
+            }
+
+            .lyrics-wrapper {
+                flex-direction: row; /* Colunas de letras lado a lado no mobile */
+                flex-wrap: wrap; /* Permite quebrar linha se o conteúdo for muito largo */
+                justify-content: center; /* Centraliza as colunas de letras */
+                gap: 15px; /* Espaço entre as colunas de letras no mobile */
+            }
+
+            .lyrics-col {
+                max-width: 45vw; /* Ajusta a largura para duas colunas no mobile */
+                min-height: auto; /* Remove altura mínima fixa para melhor adaptação */
+                padding: 15px; /* Ajusta o padding para mobile */
+                font-size: 0.95em; /* Fonte ligeiramente menor para mobile */
             }
         }
 
@@ -430,10 +453,6 @@
                 font-size: 2em;
             }
 
-            .lyrics-col {
-                max-width: 90vw; /* Ajusta a largura das letras no modo coluna */
-            }
-
             .carousel-btn {
                 width: 40px;
                 height: 40px;
@@ -455,6 +474,15 @@
                 height: 50px;
                 font-size: 1.8em;
                 margin-bottom: 10px;
+            }
+            /* Ajustes específicos para telas móveis muito pequenas, se necessário */
+            .lyrics-wrapper {
+                flex-direction: column; /* Empilha as letras se a tela for muito pequena */
+                gap: 10px;
+            }
+
+            .lyrics-col {
+                max-width: 90vw; /* Ocupa largura total se empilhado */
             }
         }
     </style>
@@ -497,15 +525,16 @@
         <div id="timer"></div>
 
         <div class="carousel-container">
-            <div class="lyrics-col" id="lyrics-original"></div>
-
             <div class="carousel" id="carousel">
                 <button class="carousel-btn left" onclick="prevPhoto()">&#10094;</button>
                 <img id="carousel-img" src="imagens/1.jpeg" alt="Foto do casal">
                 <button class="carousel-btn right" onclick="nextPhoto()">&#10095;</button>
             </div>
 
-            <div class="lyrics-col" id="lyrics-translation"></div>
+            <div class="lyrics-wrapper">
+                <div class="lyrics-col" id="lyrics-original"></div>
+                <div class="lyrics-col" id="lyrics-translation"></div>
+            </div>
         </div>
 
         <audio id="audio-player" controls loop>
